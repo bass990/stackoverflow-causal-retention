@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# CI does NOT hit BigQuery — no service account, no live queries.
+# Tests run on the smoke-test suite which validates the package layout and SQL file
+# existence without any network calls.
+#
+# Live BigQuery queries are dev-only: ad-hoc estimate-sql-XX / sql-XX targets locally.
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        run: ruff check src tests
+
+      - name: Smoke tests
+        env:
+          # Smoke tests verify error-handling when GCP_PROJECT is unset, so we deliberately
+          # don't set it in CI.
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest tests/ -v --tb=short

@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stackoverflow-retention-causal"
+version = "0.1.0"
+description = "Causal inference on Stack Overflow new-contributor retention (P1 — portfolio project)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Mamadou Bassirou Diallo" },
+]
+keywords = ["causal-inference", "product-analytics", "stack-overflow", "bigquery", "experimentation", "retention"]
+
+dependencies = [
+    # BigQuery + data
+    "google-cloud-bigquery>=3.20",
+    "google-cloud-bigquery-storage>=2.24",
+    "db-dtypes>=1.2",
+    "pyarrow>=15",
+
+    # Core analysis
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "scikit-learn>=1.4",
+    "scipy>=1.12",
+    "statsmodels>=0.14",
+
+    # Causal inference
+    # linearmodels handles the 2SLS standard-error correction properly. statsmodels can
+    # do manual two-OLS-step IV but the SEs are wrong out of the box; linearmodels is
+    # cleaner than re-implementing the variance estimator by hand.
+    "linearmodels>=6.0",
+    "shap>=0.46",
+
+    # Viz
+    "matplotlib>=3.9",
+    "seaborn>=0.13",
+    "plotly>=5.24",
+
+    # Dashboard
+    "streamlit>=1.39",
+
+    # Optional fallback: local analytical engine
+    "duckdb>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.7",
+    # Notebook runtime — ipykernel registers the venv as a Jupyter kernel;
+    # jupyterlab is the browser UI (VS Code users only need ipykernel).
+    "ipykernel>=6.29",
+    "jupyterlab>=4.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/bass990/stackoverflow-retention-causal"
+Repository = "https://github.com/bass990/stackoverflow-retention-causal"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
