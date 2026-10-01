@@ -50,7 +50,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
-    "ruff>=0.7",
+    "ruff==0.15.15",
     # Notebook runtime — ipykernel registers the venv as a Jupyter kernel;
     # jupyterlab is the browser UI (VS Code users only need ipykernel).
     "ipykernel>=6.29",
