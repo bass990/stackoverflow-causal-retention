@@ -1,4 +1,4 @@
-.PHONY: install test lint dashboard pdf clean help \
+.PHONY: install test lint dashboard summary docker-build docker-run publish-space pdf clean help \
         estimate-sql-01 sql-01 \
         estimate-sql-02 sql-02 \
         estimate-sql-03 sql-03 \
@@ -10,7 +10,11 @@ help:
 	@echo "  install            -- pip install -e .[dev]"
 	@echo "  test               -- pytest tests/ -v"
 	@echo "  lint               -- ruff check src tests"
-	@echo "  dashboard          -- streamlit run src/dashboard/app.py"
+	@echo "  dashboard          -- streamlit run src/dashboard/app.py (reads data/summary/, no BigQuery needed)"
+	@echo "  summary            -- rebuild data/summary/ from data/processed/ after re-running the notebooks"
+	@echo "  docker-build       -- build the dashboard image (so-retention)"
+	@echo "  docker-run         -- run it on http://127.0.0.1:8501"
+	@echo "  publish-space      -- upload the dashboard to the Hugging Face Space (needs hf auth login)"
 	@echo "  pdf                -- render docs/EXEC_ONE_PAGER.md -> .pdf (requires pandoc)"
 	@echo "  clean              -- remove data/processed, .pytest_cache, .ruff_cache"
 	@echo ""
@@ -30,11 +34,24 @@ test:
 	pytest tests/ -v --tb=short
 
 lint:
-	ruff check src tests
+	ruff check src tests scripts
 
 # ── Dashboard ─────────────────────────────────────────────────────────────────
 dashboard:
 	streamlit run src/dashboard/app.py
+
+summary:
+	python -m src.analysis.summaries
+
+# ── Docker + Space ────────────────────────────────────────────────────────────
+docker-build:
+	docker build -t so-retention .
+
+docker-run:
+	docker run --rm -p 127.0.0.1:8501:8501 so-retention
+
+publish-space:
+	python scripts/publish_space.py
 
 # ── Exec one-pager render (requires pandoc) ───────────────────────────────────
 pdf:

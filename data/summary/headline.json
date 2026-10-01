@@ -1,0 +1,16 @@
+{
+  "n_question_first": 1772119,
+  "n_d180_observable": 1531825,
+  "share_d180_observable": 0.8644030113101885,
+  "active_d30_rate": 0.24046297116615759,
+  "active_d180_rate_observable": 0.04761640526822581,
+  "got_any_answer_rate": 0.7385062741271889,
+  "got_answer_within_24h_rate": 0.6171899291187556,
+  "got_answer_within_1h_rate": 0.4527280617159457,
+  "has_code_block_rate": 0.7836561765885925,
+  "has_link_rate": 0.21793175289018402,
+  "has_image_rate": 0.05373115462336333,
+  "first_cohort_month": "2018-01-01",
+  "last_cohort_month": "2022-09-01",
+  "data_snapshot_date": "2022-09-25"
+}

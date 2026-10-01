@@ -6,24 +6,27 @@ on:
   pull_request:
     branches: [main]
 
-# CI does NOT hit BigQuery — no service account, no live queries.
-# Tests run on the smoke-test suite which validates the package layout and SQL file
-# existence without any network calls.
+# CI does NOT hit BigQuery: no service account, no live queries.
+# The estimator tests run on synthetic data with a known effect; the dashboard tests
+# render every page from the committed summaries in data/summary/.
 #
-# Live BigQuery queries are dev-only: ad-hoc estimate-sql-XX / sql-XX targets locally.
+# Live BigQuery queries are dev-only: estimate-sql-XX / sql-XX targets locally.
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
 
@@ -33,11 +36,25 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check src tests
+        run: ruff check src tests scripts
 
-      - name: Smoke tests
+      - name: Tests
         env:
-          # Smoke tests verify error-handling when GCP_PROJECT is unset, so we deliberately
-          # don't set it in CI.
+          # One test checks the error when GCP_PROJECT is unset, so it stays unset here.
           PYTHONPATH: ${{ github.workspace }}
         run: pytest tests/ -v --tb=short
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the dashboard image
+        run: docker build -t so-retention .
+      - name: Boot it and hit the health endpoint
+        run: |
+          docker run -d --name so -p 8501:8501 so-retention
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8501/_stcore/health && exit 0
+            sleep 2
+          done
+          docker logs so; exit 1

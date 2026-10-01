@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "stackoverflow-retention-causal"
+name = "stackoverflow-causal-retention"
 version = "0.1.0"
 description = "Causal inference on Stack Overflow new-contributor retention (P1 — portfolio project)"
 readme = "README.md"
@@ -40,8 +40,8 @@ dependencies = [
     "seaborn>=0.13",
     "plotly>=5.24",
 
-    # Dashboard
-    "streamlit>=1.39",
+    # Dashboard (>=1.48 for the `width=` argument that replaced use_container_width)
+    "streamlit>=1.48",
 
     # Optional fallback: local analytical engine
     "duckdb>=1.0",
@@ -55,11 +55,13 @@ dev = [
     # jupyterlab is the browser UI (VS Code users only need ipykernel).
     "ipykernel>=6.29",
     "jupyterlab>=4.2",
+    # Publishing the dashboard to the Hugging Face Space (scripts/publish_space.py).
+    "huggingface_hub>=0.30",
 ]
 
 [project.urls]
-Homepage = "https://github.com/bass990/stackoverflow-retention-causal"
-Repository = "https://github.com/bass990/stackoverflow-retention-causal"
+Homepage = "https://github.com/bass990/stackoverflow-causal-retention"
+Repository = "https://github.com/bass990/stackoverflow-causal-retention"
 
 [tool.setuptools.packages.find]
 where = ["."]

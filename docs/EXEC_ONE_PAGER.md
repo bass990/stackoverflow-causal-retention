@@ -38,6 +38,6 @@ Scope: causal estimate of an observed treatment (got fast answer) on D30 / D180 
 
 ## Tech stack and reproducibility
 
-Python 3.12. BigQuery SQL plus statsmodels / linearmodels / scikit-learn / SHAP. Full code at github.com/bass990/stackoverflow-retention-causal. Streamlit dashboard launches with `make dashboard`. Total compute cost on free tier: $0.22 of BigQuery scan.
+Python 3.11+. BigQuery SQL plus statsmodels / linearmodels / scikit-learn / SHAP. Full code at github.com/bass990/stackoverflow-causal-retention. Interactive dashboard with `make dashboard` or `make docker-run` (no BigQuery account needed). Total compute cost on free tier: $0.22 of BigQuery scan.
 
 **Author:** Mamadou Bassirou Diallo, M.S. Business Analytics + AI, UT Dallas (May 2027). LinkedIn: linkedin.com/in/mamadou9905.
